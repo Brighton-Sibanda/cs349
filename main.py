@@ -52,7 +52,7 @@ def get_sentiment(my_str):
 
 
 for i in range(review_sizes):
-    # list of relevant_data = [awesomeness, [summ score],[text score], [votes], [time], [verified], [images]]
+    # list of relevant_data = [awesomeness, [summ scores],[text scores], [votes], [times], [verifieds], [images]]
     
     # for summary
     summary_text = lemmatize(review_data['summaries'][i])
@@ -62,10 +62,19 @@ for i in range(review_sizes):
     temp_dict[review_data['asin'][i]] =  final_summary
     
     #for reviewtext
-
+    review_text = lemmatize(review_data['reviewText'][i])
+    new_addition = get_sentiment(review_text)
+    c = temp_dict[review_data['asin'][i]]
+    final_review = [c[0], c[1], c[2]+ new_addition, c[3],c[4],c[5],c[6],c[7]]
+    temp_dict[review_data['asin'][i]] =  final_review
+    
     # for vote score
+    vote = review_text = lemmatize(review_data['vote'][i])
+    c = temp_dict[review_data['asin'][i]]
+    final_votes = [c[0], c[1], c[2], c[3]+ vote,c[4],c[5],c[6],c[7]]
 
     # for time
+    
 
     # for image
 
