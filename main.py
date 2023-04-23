@@ -38,13 +38,24 @@ review_sizes = len(list(review_data['asin']))
 
 for i in range(review_sizes):
     # list of relevant_data = [awesomeness, [summ score],[text score], [votes], [time], [verified], [images]]
-    summary_text = lemmatize(review_data['summaries'][i])
     
+    # for summary
+    summary_text = lemmatize(review_data['summaries'][i])
     new_addition = get_sentiment(summary_text)
     c = temp_dict[review_data['asin'][i]]
     final_summary = [c[0], c[1] + new_addition, c[2], c[3],c[4],c[5],c[6],c[7]]
     temp_dict[review_data['asin'][i]] =  final_summary
     
+    #for reviewtext
+
+    # for vote score
+
+    # for time
+
+    # for image
+
+    # for verified
+
 
 
 
