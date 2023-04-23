@@ -20,7 +20,7 @@ productIDs = product_data[['asin', 'awesomeness']]
 length = len(list(productIDs['asin']))
 for i in range(length):
     feature_vector[productIDs['asin'][i]] = [productIDs['awesomeness'][i]]
-    temp_dict[productIDs['asin'][i]] = [productIDs['awesomeness'][i],[], [], [],[],[],[]]
+    temp_dict[productIDs['asin'][i]] = [productIDs['awesomeness'][i],[], [], [],[],[],[],[]]
     
 #order array indices according to order numbered here; for reature vector
 
@@ -37,14 +37,17 @@ for i in range(length):
 review_sizes = len(list(review_data['asin']))
 
 for i in range(review_sizes):
-    # list of relevant_data = [awesomeness, [summaries],[reviewTexts], [votes], [time], [verified], [images]
-    # summaries = temp_dict[review_data['asin'][i]][1]
+    # list of relevant_data = [awesomeness, [summ score],[text score], [votes], [time], [verified], [images]]
     summary_text = lemmatize(review_data['summaries'][i])
     
-    # but # lemmatize and remove stop words first 
-    
     new_addition = get_sentiment(summary_text)
-    temp_dict[review_data['asin'][i]] = temp_dict[review_data['asin'][i]]
+    c = temp_dict[review_data['asin'][i]]
+    final_summary = [c[0], c[1] + new_addition, c[2], c[3],c[4],c[5],c[6],c[7]]
+    temp_dict[review_data['asin'][i]] =  final_summary
+    
+
+
+
         
    
     
