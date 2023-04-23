@@ -5,6 +5,11 @@ import pandas as pd
 #import csv
 #import json
 #from tensorflow import keras
+from textblob import TextBlob
+from textblob import Word
+import nltk
+
+nltk.download('stopwords')
 
 
 review_path = "devided_dataset_v2/CDs_and_Vinyl/train/review_training.json"
@@ -35,6 +40,16 @@ for i in range(length):
 
 #data collection
 review_sizes = len(list(review_data['asin']))
+def lemmatize(mystr):
+    stop_words = set(nltk.corpus.stopwords.words('english'))
+    words = TextBlob(mystr).words
+    words = [word.lemmatize() for word in words if word.lower() not in stop_words]
+    lemmatized_text = " ".join(words)
+    return lemmatized_text
+
+def get_sentiment(my_str):  
+    return 0
+
 
 for i in range(review_sizes):
     # list of relevant_data = [awesomeness, [summ score],[text score], [votes], [time], [verified], [images]]
@@ -55,19 +70,9 @@ for i in range(review_sizes):
     # for image
 
     # for verified
-
-
-
-
-        
-   
+  
     
-def lemmatize(mystr):
-    return mystr
 
-def get_sentiment(my_str):
-    
-    return 0
 
 
 
