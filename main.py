@@ -4,7 +4,8 @@ import json
 from textblob import TextBlob
 from textblob import Word
 import nltk
-
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+nltk.download('vader_lexicon')
 nltk.download('stopwords')
 
 
@@ -13,11 +14,13 @@ product_path = "devided_dataset_v2/CDs_and_Vinyl/train/product_training.json"
 product_data = pd.read_json(product_path)
 review_data = pd.read_json(review_path)
 
+
+'''
 #Training and coming up with feature vector
 feature_vector = {}  # key = product ; values = array of final feature values
 temp_dict = {} # temp dict to compile current feature info for a product accross features
 
-productIDs = product_data[['asin', 'awesomeness']]
+productIDs = product_data
 length = len(list(productIDs['asin']))
 for i in range(length):
     feature_vector[productIDs['asin'][i]] = [productIDs['awesomeness'][i]]
@@ -43,19 +46,12 @@ def lemmatize(mystr):
     lemmatized_text = " ".join(words)
     return lemmatized_text
 
-def get_sentiment(my_str):  
-    return 0
-
 # now collecting relevant information and making conversions for all reviews
 for i in range(review_sizes):
     # list of relevant_data = [[summ scores],[text scores], [votes], [times], [verifieds], [images]]
     
     # for summary
-    summary_text = lemmatize(review_data['summary'][i])
-    new_addition = get_sentiment(summary_text)
-    c = temp_dict[review_data['asin'][i]]
-    final_summary = [c[0] + [new_addition], c[1], c[2],c[3],c[4],c[5],c[6]]
-    temp_dict[review_data['asin'][i]] =  final_summary
+    
     
     #for reviewtext
     review_text = lemmatize(review_data['reviewText'][i])
@@ -93,11 +89,32 @@ for i in range(review_sizes):
     temp_dict[review_data['asin'][i]] =  final_verified
 
 
-# now to calculate averages with weights accounted for
-
-  
+    # now to calculate averages with weights accounted for'''
+def get_sentiment(text):
+    analyzer = SentimentIntensityAnalyzer()
+    scores = analyzer.polarity_scores(text)
+    # Get the sentiment label based on the polarity scores
+    if scores['compound'] > 0:
+        sentiment_label = 'Positive'
+    elif scores['compound'] < 0:
+        sentiment_label = 'Negative'
+    else:
+        sentiment_label = 'Neutral'
+    return sentiment_label
     
+def get_text(df): 
+    num_positives = 0
+    num_negatives = 0
+    for i in df['summary']:
+        sent = get_sentiment(i)
+        if sent == 'positive':
+            num_positives += 1
+        elif sent == 'negative':
+            num_negatives += 1
+    return [num_positives, num_negatives]
 
+
+    
 
 
 
