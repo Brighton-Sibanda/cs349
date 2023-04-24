@@ -109,8 +109,9 @@ def get_text(df):
         sent = get_sentiment(i)
         if sent == 'positive':
             positive.append('True')
-        elif sent == 'negative':
+        else:
             positive.append('False')
+        
     df['positive'] = positive
     return df
 
