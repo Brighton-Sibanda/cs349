@@ -95,9 +95,13 @@ for i in range(review_sizes):
 
 # now to calculate averages with weights accounted for
 
-  
-    
-
-
-
-
+def get_num_votes(df):
+    """ 
+    input: pandas dataframe with all reviews for one product
+    output: two-element tuple with first element being the 
+            number of positive reviews and the second element 
+            being the number of negative reviews
+    """
+    pos = len(df[df["positive"]])
+    neg = len(df[df["positive"] == False])
+    return (pos, neg)
