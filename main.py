@@ -126,3 +126,19 @@ def get_num_votes(df):
     pos = len(df[df["positive"]])
     neg = len(df[df["positive"] == False])
     return (pos, neg)
+
+"""function the gives a value between 0 and 1 for a review depending
+on the relative time it was sent
+"""
+
+""" function to substitute 'None' for False and True otherwise for 
+ the images column
+"""
+
+""" function to count number of positive reviews with images and 
+negative reviews with images"""
+
+"""function to count number of positive verified and negative verified"""
+
+"""loop through the products and construct the row with the feature vector 
+values"""
