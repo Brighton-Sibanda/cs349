@@ -103,15 +103,16 @@ def get_sentiment(text):
     return sentiment_label
     
 def get_text(df): 
-    num_positives = 0
-    num_negatives = 0
+    positive = []
+
     for i in df['summary']:
         sent = get_sentiment(i)
         if sent == 'positive':
-            num_positives += 1
+            positive.append('True')
         elif sent == 'negative':
-            num_negatives += 1
-    return [num_positives, num_negatives]
+            positive.append('False')
+    df['positive'] = positive
+    return df
 
 
     
