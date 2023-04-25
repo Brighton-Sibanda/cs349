@@ -34,16 +34,20 @@ def get_sentiment(text):
     scores = analyzer.polarity_scores(text)
     return scores['compound']
     
-def avg_pos_neg_sent(df, col): 
+def add_sentiment_col(df): 
     positive = []
 
-    for i in df[col]:
-        sent = get_sentiment(i)
-        if sent == 'Positive':
+    for index, row in df.iterrows():
+        summary = row["summary"]
+        text = row["reviewText"]
+        summary_score = get_sentiment(summary)
+        text_score = get_sentiment(text)
+        sentiment_score = summary_score + text_score
+
+        if sentiment_score>0.6:
             positive.append('True')
         else:
             positive.append('False')
-        
     df['positive'] = positive
     return df
 
