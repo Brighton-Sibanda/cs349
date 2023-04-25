@@ -15,6 +15,7 @@ review_data = pd.read_json(review_path)
 review_data["summary"] = review_data["summary"].fillna("negative")
 review_data["reviewText"] = review_data["reviewText"].fillna("negative")
 review_data['vote'] = review_data['vote'].apply(lambda x: 0 if x == None else int(x))
+df['image'] = df['image'].apply(lambda x: False if x == None else True)
 
 
 '''
@@ -93,15 +94,7 @@ def calculate_time_score(reviews):
         time_score = 1 - time_diff
         time_scores.append(time_score)
     
-    return sum(time_scores) / len(time_scores) 
-
-def replace_none_with_zero(df):
-    """ function to substitute 'None' for False and True otherwise for 
-     the images column
-    """
-    df['image'] = df['image'].apply(lambda x: False if x == None else True)
-    return df
-
+    return sum(time_scores) / len(time_scores)
 
 def image_review_count(df):
     """ function to count number of positive reviews with images and 
