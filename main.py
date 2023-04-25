@@ -75,26 +75,32 @@ def get_vote_score(df):
     neg = neg['vote'].sum()
 
     return (pos + 1)/(neg + 1)
-    
 
-def calculate_time_score(reviews):
+def calculate_time_score(df):
     """function the gives a value between 0 and 1 for a review depending
     on the relative time it was sent
     """
-    oldest_date = reviews['unixReviewTime'].min()
-    newest_date = reviews['unixReviewTime'].max()
+    oldest_date = df['unixReviewTime'].min()
+    newest_date = df['unixReviewTime'].max()
     
     if oldest_date == newest_date:
-        return 0.5  # if there's only one review, give it a neutral score
+        return (0.5, 0.5)  # if there's only one review, give it a neutral score
     
-    time_scores = []
-    for i in range(len(reviews)):
-        date = reviews['unixReviewTime']
-        time_diff = (date - oldest_date) / (newest_date - oldest_date)
-        time_score = 1 - time_diff
-        time_scores.append(time_score)
-    
-    return sum(time_scores) / len(time_scores)
+    pos_scores = []
+    neg_scores = []
+    time_range = newest_date - oldest_date
+    for index, row in df.iterrows():
+        date = row['unixReviewTime']
+        score = (date - oldest_date) / time_range
+        if row["positive"]:
+            pos_scores.append(score)
+        else:
+            neg_scores.append(score)
+    if not pos_scores:
+        pos_scores.append(0.5)
+    if not neg_scores:
+        neg_scores.append(0.5)
+    return (sum(pos_scores)/len(pos_scores), sum(neg_scores)/len(neg_scores))
 
 def image_review_count(df):
     """ function to count number of positive reviews with images and 
