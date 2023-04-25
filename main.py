@@ -30,10 +30,9 @@ avg positive summary
 def get_sentiment(text):
     analyzer = SentimentIntensityAnalyzer()
     scores = analyzer.polarity_scores(text)
-    # Get the sentiment label based on the polarity scores
     return scores['compound']
     
-def avg_pos_neg_sent(df, col): 
+def add_sentiment_col(df): 
     positive = []
 
     for index, row in df.iterrows():
