@@ -53,7 +53,7 @@ def get_text(df):
 
 # now to calculate averages with weights accounted for
 
-def get_num_votes(df):
+def get_num_pos_neg(df):
     """ 
     input: pandas dataframe with all reviews for one product
     output: two-element tuple with first element being the 
@@ -113,5 +113,4 @@ def num_verified(df):
 
 """loop through the products and construct the row with the feature vector 
 values"""
-
 
