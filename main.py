@@ -136,7 +136,7 @@ for i in iDs:
     vote_score = get_vote_score(text_sentiments)
     image_count = image_review_count(text_sentiments)
     verified_count = num_verified(text_sentiments)
-    time_score = calculate_time_score(text_sentiments)
+    pos_time_score, neg_time_score  = calculate_time_score(text_sentiments)
 
-    feature_vector.loc[len(feature_vector)] = [num_pos, num_neg, vote_score, image_count, verified_count, time_score]
+    feature_vector.loc[len(feature_vector)] = [num_pos, num_neg, vote_score, image_count, verified_count, pos_time_score, neg_time_score]
 
