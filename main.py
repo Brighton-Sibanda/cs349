@@ -32,11 +32,9 @@ def get_sentiment(text):
     # Get the sentiment label based on the polarity scores
     if scores['compound'] > 0:
         sentiment_label = 'Positive'
-    elif scores['compound'] < 0:
-        sentiment_label = 'Negative'
     else:
-        sentiment_label = 'Neutral'
-    return sentiment_label
+        sentiment_label = 'Negative'
+    return sentiment_label 
     
 def get_text(df): 
     positive = []
@@ -53,7 +51,7 @@ def get_text(df):
 
 # now to calculate averages with weights accounted for
 
-def get_num_pos_neg(df):
+def get_num_votes(df):
     """ 
     input: pandas dataframe with all reviews for one product
     output: two-element tuple with first element being the 
@@ -81,9 +79,7 @@ def calculate_time_score(reviews):
         time_score = 1 - time_diff
         time_scores.append(time_score)
     
-    return sum(time_scores) / len(time_scores) # add something
-
-
+    return sum(time_scores) / len(time_scores) 
 
 def replace_none_with_zero(df):
     """ function to substitute 'None' for False and True otherwise for 
@@ -113,4 +109,3 @@ def num_verified(df):
 
 """loop through the products and construct the row with the feature vector 
 values"""
-
