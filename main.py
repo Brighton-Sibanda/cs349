@@ -12,6 +12,9 @@ review_path = "devided_dataset_v2/CDs_and_Vinyl/train/review_training.json"
 product_path = "devided_dataset_v2/CDs_and_Vinyl/train/product_training.json"
 product_data = pd.read_json(product_path)
 review_data = pd.read_json(review_path)
+review_data["summary"] = review_data["summary"].fillna("negative")
+review_data["reviewText"] = review_data["reviewText"].fillna("negative")
+review_data['vote'] = review_data['vote'].apply(lambda x: 0 if x == None else int(x))
 
 
 '''
@@ -96,7 +99,7 @@ def replace_none_with_zero(df):
     """ function to substitute 'None' for False and True otherwise for 
      the images column
     """
-    df['image'] = df['image'].apply(lambda x: False if x == 'None' else True)
+    df['image'] = df['image'].apply(lambda x: False if x == None else True)
     return df
 
 
