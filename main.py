@@ -74,7 +74,7 @@ def get_vote_score(df):
     neg = neg['vote'].sum()
 
     return (pos + 1)/(neg + 1)
-    
+    ""
 
 def calculate_time_score(reviews):
     """function the gives a value between 0 and 1 for a review depending
