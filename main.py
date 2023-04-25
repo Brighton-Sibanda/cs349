@@ -45,9 +45,9 @@ def add_sentiment_col(df):
         sentiment_score = summary_score + text_score
 
         if sentiment_score>0.6:
-            positive.append('True')
+            positive.append(True)
         else:
-            positive.append('False')
+            positive.append(False)
     df['positive'] = positive
     return df
 
@@ -67,7 +67,7 @@ def get_num_pos_neg(df):
 def get_vote_score(df):
 
 
-    pos = df[df["positive"]]
+    pos = df[df["positive"] == True]
     pos = pos['vote'].sum()
     neg = df[df["positive"]==False]
     neg = neg['vote'].sum()
@@ -122,3 +122,9 @@ def num_verified(df):
 
 """loop through the products and construct the row with the feature vector 
 values"""
+
+'''feature_vector = pd.DataFrame({})
+iDs = list(product_data['asin'])
+
+for i in iDs:
+    '''
