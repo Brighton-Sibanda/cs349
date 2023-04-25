@@ -37,10 +37,10 @@ def get_sentiment(text):
         sentiment_label = 'Negative'
     return sentiment_label 
     
-def get_text(df): 
+def avg_pos_neg_sent(df, col): 
     positive = []
 
-    for i in df['summary']:
+    for i in df[col]:
         sent = get_sentiment(i)
         if sent == 'Positive':
             positive.append('True')
@@ -62,6 +62,17 @@ def get_num_pos_neg(df):
     pos = len(df[df["positive"]])
     neg = len(df[df["positive"] == False])
     return (pos, neg)
+
+def get_vote_score(df):
+
+
+    pos = df[df["positive"]]
+    pos = pos['vote'].sum()
+    neg = df[df["positive"]==False]
+    neg = neg['vote'].sum()
+
+    return (pos + 1)/(neg + 1)
+    
 
 def calculate_time_score(reviews):
     """function the gives a value between 0 and 1 for a review depending
