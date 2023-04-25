@@ -7,7 +7,7 @@ from datetime import datetime
 nltk.download('vader_lexicon')
 nltk.download('stopwords')
 
-
+""
 review_path = "devided_dataset_v2/CDs_and_Vinyl/train/review_training.json"
 product_path = "devided_dataset_v2/CDs_and_Vinyl/train/product_training.json"
 product_data = pd.read_json(product_path)
