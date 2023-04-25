@@ -108,7 +108,7 @@ def image_review_count(df):
     negative reviews with images"""
     
     df_new = df[df["image"]]
-    pos = len(df[df_new["positive"]])
+    pos = len(df[df_new["positive"] == True])
     neg = len(df[df_new["positive"]==False])
     return (pos, neg)
 
