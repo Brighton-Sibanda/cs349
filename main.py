@@ -12,8 +12,6 @@ review_path = "devided_dataset_v2/CDs_and_Vinyl/train/review_training.json"
 product_path = "devided_dataset_v2/CDs_and_Vinyl/train/product_training.json"
 product_data = pd.read_json(product_path)
 review_data = pd.read_json(review_path)
-review_data["summary"] = review_data["summary"].fillna("negative")
-review_data["reviewText"] = review_data["summary"].fillna("negative")
 
 
 '''
@@ -32,22 +30,23 @@ avg positive summary
 def get_sentiment(text):
     analyzer = SentimentIntensityAnalyzer()
     scores = analyzer.polarity_scores(text)
-    return scores['compound']
+    # Get the sentiment label based on the polarity scores
+    if scores['compound'] > 0:
+        sentiment_label = 'Positive'
+    else:
+        sentiment_label = 'Negative'
+    return sentiment_label 
     
-def add_sentiment_col(df): 
+def avg_pos_neg_sent(df, col): 
     positive = []
 
-    for index, row in df.iterrows():
-        summary = row["summary"]
-        text = row["reviewText"]
-        summary_score = get_sentiment(summary)
-        text_score = get_sentiment(text)
-        sentiment_score = summary_score + text_score
-
-        if sentiment_score>0.6:
+    for i in df[col]:
+        sent = get_sentiment(i)
+        if sent == 'Positive':
             positive.append('True')
         else:
             positive.append('False')
+        
     df['positive'] = positive
     return df
 
@@ -87,7 +86,7 @@ def calculate_time_score(reviews):
     
     time_scores = []
     for i in range(len(reviews)):
-        date = reviews.iloc[:, 2]
+        date = reviews.iloc[i, 2]
         time_diff = (date - oldest_date) / (newest_date - oldest_date)
         time_score = 1 - time_diff
         time_scores.append(time_score)
