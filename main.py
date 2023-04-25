@@ -78,15 +78,15 @@ def calculate_time_score(reviews):
     """function the gives a value between 0 and 1 for a review depending
     on the relative time it was sent
     """
-    oldest_date = reviews.iloc[:, 2].min()
-    newest_date = reviews.iloc[:, 2].max()
+    oldest_date = reviews['unixReviewTime'].min()
+    newest_date = reviews['unixReviewTime'].max()
     
     if oldest_date == newest_date:
         return 0.5  # if there's only one review, give it a neutral score
     
     time_scores = []
     for i in range(len(reviews)):
-        date = reviews.iloc[i, 2]
+        date = reviews['unixReviewTime']
         time_diff = (date - oldest_date) / (newest_date - oldest_date)
         time_score = 1 - time_diff
         time_scores.append(time_score)
