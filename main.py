@@ -41,7 +41,7 @@ def get_text(df):
 
     for i in df['summary']:
         sent = get_sentiment(i)
-        if sent == 'positive':
+        if sent == 'Positive':
             positive.append('True')
         else:
             positive.append('False')
