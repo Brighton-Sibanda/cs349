@@ -129,12 +129,9 @@ iDs = list(product_data['asin'])
 
 for i in iDs:
     current_data = feature_vector[feature_vector["asin"] == i]
-    text_sentiments = 
-    num_pos, num_neg = func(text_sentiments)
-    vote_score = func(text_sentiments)
-    time_score = func(text_sentiments)
+    text_sentiments = add_sentiment_col(current_data)
+    num_pos, num_neg = get_num_pos_neg(text_sentiments)
 
 
-
-    feature_vector.loc[len(feature_vetor)] = [num_pos, num_neg, vote, etc]
+    feature_vector.loc[len(feature_vector)] = [num_pos, num_neg, ETC]
 
