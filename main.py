@@ -12,6 +12,8 @@ review_path = "devided_dataset_v2/CDs_and_Vinyl/train/review_training.json"
 product_path = "devided_dataset_v2/CDs_and_Vinyl/train/product_training.json"
 product_data = pd.read_json(product_path)
 review_data = pd.read_json(review_path)
+review_data["summary"] = review_data["summary"].fillna("negative")
+review_data["reviewText"] = review_data["summary"].fillna("negative")
 
 
 '''
