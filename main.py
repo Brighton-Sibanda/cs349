@@ -124,7 +124,7 @@ def num_verified(df):
 """loop through the products and construct the row with the feature vector 
 values"""
 
-feature_vector = pd.DataFrame({})
+feature_vector = pd.DataFrame({"num_pos":[], "num_neg":[], "vote_score":[], "image_count":[], "verified_count":[], "pos_time_score":[], "neg_time_score":[]})
 iDs = list(product_data['asin'])
 
 for i in iDs:
