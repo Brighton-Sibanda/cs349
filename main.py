@@ -3,6 +3,7 @@ import csv
 import json
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from datetime import datetime
 nltk.download('vader_lexicon')
 nltk.download('stopwords')
 
@@ -63,9 +64,25 @@ def get_num_votes(df):
     neg = len(df[df["positive"] == False])
     return (pos, neg)
 
-"""function the gives a value between 0 and 1 for a review depending
-on the relative time it was sent
-"""
+def calculate_time_score(reviews):
+    """function the gives a value between 0 and 1 for a review depending
+    on the relative time it was sent
+    """
+    oldest_date = min(review['date'] for review in reviews)
+    newest_date = max(review['date'] for review in reviews)
+    
+    if oldest_date == newest_date:
+        return 0.5  # if there's only one review, give it a neutral score
+    
+    time_scores = []
+    for review in reviews:
+        date = review['date']
+        time_diff = (date - oldest_date).days / (newest_date - oldest_date).days
+        time_score = 1 - time_diff
+        time_scores.append(time_score)
+    
+    return sum(time_scores) / len(time_scores) # add something
+
 
 
 def replace_none_with_zero(df):
