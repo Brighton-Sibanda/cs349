@@ -128,4 +128,8 @@ values"""
 iDs = list(product_data['asin'])
 
 for i in iDs:
-    '''
+    current_data = feature_vector[feature_vector["asin"] == i]
+    text_sentiments = 
+
+
+    feature.loc[len(feature_vetor)] = [7, 8]'''
