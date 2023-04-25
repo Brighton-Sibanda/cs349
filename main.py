@@ -66,15 +66,15 @@ def calculate_time_score(reviews):
     """function the gives a value between 0 and 1 for a review depending
     on the relative time it was sent
     """
-    oldest_date = min(review['date'] for review in reviews)
-    newest_date = max(review['date'] for review in reviews)
+    oldest_date = min(review['UnixReviewTime'] for review in reviews)
+    newest_date = max(review['UnixReviewTime'] for review in reviews)
     
     if oldest_date == newest_date:
         return 0.5  # if there's only one review, give it a neutral score
     
     time_scores = []
     for review in reviews:
-        date = review['date']
+        date = review['UnixReviewTime']
         time_diff = (date - oldest_date).days / (newest_date - oldest_date).days
         time_score = 1 - time_diff
         time_scores.append(time_score)
@@ -102,9 +102,9 @@ def num_verified(df):
 
     """function to count number of positive verified and negative verified"""
 
-    df = df[df["verified"]]
-    pos = len(df[df["positive"]])
-    neg = len(df[df["positive"]==False])
+    df_new = df[df["verified"]]
+    pos = len(df[df_new["positive"]])
+    neg = len(df[df_new["positive"]==False])
     return (pos, neg)
 
 """loop through the products and construct the row with the feature vector 
