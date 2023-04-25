@@ -131,7 +131,9 @@ for i in iDs:
     current_data = feature_vector[feature_vector["asin"] == i]
     text_sentiments = add_sentiment_col(current_data)
     num_pos, num_neg = get_num_pos_neg(text_sentiments)
+    pos_ratio = (num_pos)/(num_neg + num_pos)
+    neg_ratio = (num_neg)/(num_pos + num_neg)
 
 
-    feature_vector.loc[len(feature_vector)] = [num_pos, num_neg, ETC]
+    feature_vector.loc[len(feature_vector)] = [pos_ratio, neg_ratio, ETC]
 
