@@ -31,16 +31,11 @@ def get_sentiment(text):
     analyzer = SentimentIntensityAnalyzer()
     scores = analyzer.polarity_scores(text)
     # Get the sentiment label based on the polarity scores
-    if scores['compound'] > 0:
-        sentiment_label = 'Positive'
-    else:
-        sentiment_label = 'Negative'
-    return sentiment_label 
+    return scores['compound']
     
 def avg_pos_neg_sent(df, col): 
     positive = []
 
-<<<<<<< HEAD
     for index, row in df.iterrows():
         summary = row["summary"]
         text = row["reviewText"]
@@ -52,15 +47,6 @@ def avg_pos_neg_sent(df, col):
             positive.append(True)
         else:
             positive.append(False)
-=======
-    for i in df[col]:
-        sent = get_sentiment(i)
-        if sent == 'Positive':
-            positive.append('True')
-        else:
-            positive.append('False')
-        
->>>>>>> refs/remotes/origin/main
     df['positive'] = positive
     return df
 
@@ -73,7 +59,7 @@ def get_num_pos_neg(df):
             number of positive reviews and the second element 
             being the number of negative reviews
     """
-    pos = len(df[df["positive"]])
+    pos = len(df[df["positive"] == True])
     neg = len(df[df["positive"] == False])
     return (pos, neg)
 
