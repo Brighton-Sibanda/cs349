@@ -15,7 +15,7 @@ review_data = pd.read_json(review_path)
 review_data["summary"] = review_data["summary"].fillna("negative")
 review_data["reviewText"] = review_data["reviewText"].fillna("negative")
 review_data['vote'] = review_data['vote'].apply(lambda x: 0 if x == None else int(x))
-df['image'] = df['image'].apply(lambda x: False if x == None else True)
+review_data['image'] = review_data['image'].apply(lambda x: False if x == None else True)
 
 
 '''
