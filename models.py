@@ -92,3 +92,4 @@ gb_f1 = f1_score(train_dep, gb_y_pred, average='macro')
 print("Gradient Boosting Precision: {:.2f}".format(gb_precision))
 print("Gradient Boosting Recall: {:.2f}".format(gb_recall))
 print("Gradient Boosting F1 Score: {:.2f}".format(gb_f1))
+
