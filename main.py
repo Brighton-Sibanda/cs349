@@ -14,7 +14,7 @@ product_data = pd.read_json(product_path)
 review_data = pd.read_json(review_path)
 review_data["summary"] = review_data["summary"].fillna("negative")
 review_data["reviewText"] = review_data["reviewText"].fillna("negative")
-review_data['vote'] = review_data['vote'].apply(lambda x: 0 if x == None else int(x))
+review_data['vote'] = review_data['vote'].apply(lambda x: 0 if x == None else int(x.replace(',','')))
 review_data['image'] = review_data['image'].apply(lambda x: False if x == None else True)
 
 
@@ -107,17 +107,17 @@ def image_review_count(df):
     negative reviews with images"""
     
     df_new = df[df["image"]]
-    pos = len(df[df_new["positive"] == True])
-    neg = len(df[df_new["positive"]==False])
+    pos = len(df_new[df_new["positive"] == True])
+    neg = len(df_new[df_new["positive"]==False])
     return (pos, neg)
 
 def num_verified(df):
 
     """function to count number of positive verified and negative verified"""
 
-    df_new = df[df["verified"]]
-    pos = len(df[df_new["positive"]])
-    neg = len(df[df_new["positive"]==False])
+    df_new = df[df["verified"]==True]
+    pos = len(df_new[df_new["positive"]==True])
+    neg = len(df_new[df_new["positive"]==False])
     return (pos, neg)
 
 """loop through the products and construct the row with the feature vector 
@@ -127,7 +127,7 @@ feature_vector = pd.DataFrame({"num_pos":[], "num_neg":[], "vote_score":[], "pos
 iDs = list(product_data['asin'])
 
 for i in iDs:
-    current_data = feature_vector[feature_vector["asin"] == i]
+    current_data = review_data[review_data["asin"] == i]
     text_sentiments = add_sentiment_col(current_data)
     num_pos, num_neg = get_num_pos_neg(text_sentiments)
     pos_ratio = (num_pos)/(num_neg + num_pos)
