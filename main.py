@@ -140,3 +140,5 @@ for i in iDs:
     feature_vector.loc[len(feature_vector)] = [i,num_pos, num_neg, vote_score, pos_image_count, neg_image_count, pos_verified_count, neg_verified_count, pos_time_score, neg_time_score]
 feature_vector["awesomeness"] = list(product_data["awesomeness"])
 
+
+
