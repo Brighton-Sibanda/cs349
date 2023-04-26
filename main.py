@@ -123,7 +123,7 @@ def num_verified(df):
 """loop through the products and construct the row with the feature vector 
 values"""
 
-feature_vector = pd.DataFrame({"num_pos":[], "num_neg":[], "vote_score":[], "pos_image_count":[], "neg_image_count":[], "pos_verified_count":[], "neg_verified_count":[], "pos_time_score":[], "neg_time_score":[]})
+feature_vector = pd.DataFrame({"asin":[],"num_pos":[], "num_neg":[], "vote_score":[], "pos_image_count":[], "neg_image_count":[], "pos_verified_count":[], "neg_verified_count":[], "pos_time_score":[], "neg_time_score":[]})
 iDs = list(product_data['asin'])
 
 for i in iDs:
@@ -137,4 +137,6 @@ for i in iDs:
     pos_verified_count, neg_verified_count = num_verified(text_sentiments)
     pos_time_score, neg_time_score  = calculate_time_score(text_sentiments)
 
-    feature_vector.loc[len(feature_vector)] = [num_pos, num_neg, vote_score, pos_image_count, neg_image_count, pos_verified_count, neg_verified_count, pos_time_score, neg_time_score]
+    feature_vector.loc[len(feature_vector)] = [i,num_pos, num_neg, vote_score, pos_image_count, neg_image_count, pos_verified_count, neg_verified_count, pos_time_score, neg_time_score]
+feature_vector["awesomeness"] = list(product_data["awesomeness"])
+
