@@ -44,7 +44,12 @@ def add_sentiment_col(df):
         text = row["reviewText"]
         summary_score = get_sentiment(summary)
         text_score = get_sentiment(text)
-        sentiment_score = summary_score + text_score
+        if summary_score == 0:
+            sentiment_score = 2*text_score
+        elif text_score == 0:
+            sentiment_score = 2 * summary_score
+        else:
+            sentiment_score = summary_score + text_score
 
         if sentiment_score>0.6:
             positive.append(True)
