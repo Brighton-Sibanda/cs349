@@ -3,9 +3,15 @@ import csv
 import json
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-from datetime import datetime
 nltk.download('vader_lexicon')
 nltk.download('stopwords')
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import GradientBoostingClassifier
+import warnings
+
+warnings.filterwarnings("ignore")
+
+
 
 ""
 review_path = "devided_dataset_v2/CDs_and_Vinyl/train/review_training.json"
@@ -18,6 +24,21 @@ review_data['vote'] = review_data['vote'].apply(lambda x: 0 if x == None else in
 review_data['image'] = review_data['image'].apply(lambda x: False if x == None else True)
 
 
+test_review_path = "devided_dataset_v2/CDs_and_Vinyl/test1/review_test.json"
+test_product_path = "devided_dataset_v2/CDs_and_Vinyl/test1/product_test.json"
+test_product_data = pd.read_json(test_product_path)
+test_review_data = pd.read_json(test_review_path)
+test_review_data["summary"] = test_review_data["summary"].fillna("negative")
+test_review_data["reviewText"] = test_review_data["reviewText"].fillna("negative")
+test_review_data['vote'] = test_review_data['vote'].apply(lambda x: 0 if x == None else int(x.replace(',','')))
+test_review_data['image'] = test_review_data['image'].apply(lambda x: False if x == None else True)
+
+
+
+## CUT NUMBER OF PRODUCTS FOR VALIDATION
+#product_data = product_data.iloc[:100, :]
+#test_product_data = test_product_data.iloc[:100, :]
+
 '''
 #Training and coming up with feature vector
 avg positive summary 
@@ -28,7 +49,6 @@ avg positive summary
 #6 image credibility score
 #7 verified credibility score
 #8 time score
-
 '''
 
 def get_sentiment(text):
@@ -128,22 +148,50 @@ def num_verified(df):
 """loop through the products and construct the row with the feature vector 
 values"""
 
-feature_vector = pd.DataFrame({"asin":[],"num_pos":[], "num_neg":[], "vote_score":[], "pos_image_count":[], "neg_image_count":[], "pos_verified_count":[], "neg_verified_count":[], "pos_time_score":[], "neg_time_score":[]})
+feature_vector = pd.DataFrame({"num_pos":[], "num_neg":[], "vote_score":[], "pos_image_count":[], "neg_image_count":[], "pos_verified_count":[], "neg_verified_count":[], "pos_time_score":[], "neg_time_score":[]})
 iDs = list(product_data['asin'])
 
-for i in iDs:
-    current_data = review_data[review_data["asin"] == i]
-    text_sentiments = add_sentiment_col(current_data)
-    num_pos, num_neg = get_num_pos_neg(text_sentiments)
-    pos_ratio = (num_pos)/(num_neg + num_pos)
-    neg_ratio = (num_neg)/(num_pos + num_neg)
-    vote_score = get_vote_score(text_sentiments)
-    pos_image_count, neg_image_count = image_review_count(text_sentiments)
-    pos_verified_count, neg_verified_count = num_verified(text_sentiments)
-    pos_time_score, neg_time_score  = calculate_time_score(text_sentiments)
+def make_feature_vector(iDs, feature_vector, review_data):
+    for i in iDs:
+        current_data = review_data[review_data["asin"] == i]
+        text_sentiments = add_sentiment_col(current_data)
+        num_pos, num_neg = get_num_pos_neg(text_sentiments)
+        pos_ratio = (num_pos)/(num_neg + num_pos)
+        neg_ratio = (num_neg)/(num_pos + num_neg)
+        vote_score = get_vote_score(text_sentiments)
+        pos_image_count, neg_image_count = image_review_count(text_sentiments)
+        pos_verified_count, neg_verified_count = num_verified(text_sentiments)
+        pos_time_score, neg_time_score  = calculate_time_score(text_sentiments)
+        feature_vector.loc[len(feature_vector)] = [pos_ratio, neg_ratio, vote_score, pos_image_count, neg_image_count, pos_verified_count, neg_verified_count, pos_time_score, neg_time_score]
+    return feature_vector
+train_feature_vector = make_feature_vector(iDs, feature_vector, review_data)
+train_feature_vector["awesomeness"] = list(product_data["awesomeness"])
 
-    feature_vector.loc[len(feature_vector)] = [i,num_pos, num_neg, vote_score, pos_image_count, neg_image_count, pos_verified_count, neg_verified_count, pos_time_score, neg_time_score]
-feature_vector["awesomeness"] = list(product_data["awesomeness"])
+#NOW TRAINING
+X = train_feature_vector.iloc[:, :-1]
+y = train_feature_vector.iloc[:, -1]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+clf = GradientBoostingClassifier()
+clf.fit(X_train, y_train)
+score = clf.score(X_test, y_test)
+
+print(f"Accuracy: {score}")
+
+
+#Now for testing
+iDs = list(test_product_data['asin'])
+feature_vector_2 = pd.DataFrame({"num_pos":[], "num_neg":[], "vote_score":[], "pos_image_count":[], "neg_image_count":[], "pos_verified_count":[], "neg_verified_count":[], "pos_time_score":[], "neg_time_score":[]})
+test_feature_vector = make_feature_vector(iDs, feature_vector_2, test_review_data)
+predicted_class = clf.predict(test_feature_vector)
+
+final_json = test_product_data
+final_json["awesomeness"] = predicted_class
+final_json.to_json("predictions.json")
+
+
+
+
+
 
 
 
