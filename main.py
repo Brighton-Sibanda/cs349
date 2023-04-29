@@ -48,10 +48,11 @@ test_review_data['image'] = test_review_data['image'].apply(lambda x: False if x
 #9 neg_time_score
 
 '''
-
+global analyzer
+analyzer = SentimentIntensityAnalyzer()
 def get_sentiment(text):
     ''' function to get the sentiment of a text'''
-    analyzer = SentimentIntensityAnalyzer()
+    global analyzer
     scores = analyzer.polarity_scores(text)
     return scores['compound']
     
