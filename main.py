@@ -1,3 +1,4 @@
+from thefuzz import fuzz, process
 import pandas as pd
 import csv
 import json
@@ -34,6 +35,10 @@ test_review_data['vote'] = test_review_data['vote'].apply(lambda x: 0 if x == No
 test_review_data['image'] = test_review_data['image'].apply(lambda x: False if x == None else True)
 
 
+# slice the data to retain only the first 1000 rows
+product_data = product_data.iloc[:10000, :]
+
+
 '''
  Our feature vector  is as follows 
 
@@ -48,6 +53,16 @@ test_review_data['image'] = test_review_data['image'].apply(lambda x: False if x
 #9 neg_time_score
 
 '''
+awesome_corpus = ""
+non_awesome_corpus = ""
+def get_TFIDF(text, choices):
+    
+    result = process.extractBests(text, choices, score_cutoff=0, limit=None, scorer = fuzz.token_sort_ratio) 
+    return [result[0][1], result[1][1]]
+    
+
+
+
 global analyzer
 analyzer = SentimentIntensityAnalyzer()
 def get_sentiment(text):
@@ -183,6 +198,7 @@ clf = GradientBoostingClassifier()
 clf.fit(X_train, y_train)
 score = clf.score(X_test, y_test)
 
+'''
 #Now for testing
 iDs = list(test_product_data['asin'])
 feature_vector_2 = pd.DataFrame({"num_pos":[], "num_neg":[], "vote_score":[], "pos_image_count":[], "neg_image_count":[], "pos_verified_count":[], "neg_verified_count":[], "pos_time_score":[], "neg_time_score":[]})
@@ -194,7 +210,7 @@ final_json["awesomeness"] = predicted_class
 final_json.to_json("predictions.json")
 
 
-
+'''
 
 
 
