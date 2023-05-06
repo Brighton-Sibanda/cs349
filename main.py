@@ -7,6 +7,7 @@ nltk.download('vader_lexicon')
 nltk.download('stopwords')
 from nltk.stem import WordNetLemmatizer
 nltk.download('wordnet')
+from nltk.corpus import stopwords
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingClassifier
 import warnings
@@ -169,17 +170,26 @@ iDs = list(product_data['asin'])
 # create a WordNetLemmatizer object
 lemmatizer = WordNetLemmatizer()
 
-# define a function to lemmatize a sentence
-def lemmatize_sentence(sentence):
-    words = nltk.word_tokenize(sentence)
-    lemmatized_words = [lemmatizer.lemmatize(word) for word in words]
+# remove stopwords from the list of words
+stopwords_list = stopwords.words('english')
+filtered_words = [word for word in words if word not in stopwords_list]
+
+# define a function to lemmatize and remove stopwords from a sentence
+def lemmatize_sentence(sentence, filtered_words):
+    # tokenize the sentence into words
+    words = nltk.word_tokenize(sentence.lower())
+    
+    # lemmatize each word in the filtered list of words
+    lemmatized_words = [lemmatizer.lemmatize(word) for word in filtered_words]
+    
+    # join the lemmatized words back into a sentence
     return ' '.join(lemmatized_words)
 
 def get_all_words(df, col_name, id_list):
     #filter data
     df = df[df['asin'].isin(id_list)]
     #concatenate
-    concatenated_text = df[col_name].str.lower().str.cat(sep=' ')
+    concatenated_text = df[col_name].str.cat(sep=' ')
 
     return lemmatize_sentence(concatenated_text)
 
