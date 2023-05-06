@@ -1,4 +1,3 @@
-from thefuzz import fuzz, process
 import pandas as pd
 import csv
 import json
@@ -167,11 +166,22 @@ def num_verified(df):
 feature_vector = pd.DataFrame({"num_pos":[], "num_neg":[], "vote_score":[], "pos_image_count":[], "neg_image_count":[], "pos_verified_count":[], "neg_verified_count":[], "pos_time_score":[], "neg_time_score":[]})
 iDs = list(product_data['asin'])
 
+# create a WordNetLemmatizer object
+lemmatizer = WordNetLemmatizer()
+
+# define a function to lemmatize a sentence
+def lemmatize_sentence(sentence):
+    words = nltk.word_tokenize(sentence)
+    lemmatized_words = [lemmatizer.lemmatize(word) for word in words]
+    return ' '.join(lemmatized_words)
+
 def get_all_words(df, col_name, id_list):
     #filter data
     df = df[df['asin'].isin(id_list)]
+    #concatenate
+    concatenated_text = df[col_name].str.lower().str.cat(sep=' ')
 
-    return df[col_name].str.lower().str.cat(sep=' ')
+    return lemmatize_sentence(concatenated_text)
 
 def make_feature_vector(iDs, feature_vector, review_data):
     
@@ -205,7 +215,6 @@ clf = GradientBoostingClassifier()
 clf.fit(X_train, y_train)
 score = clf.score(X_test, y_test)
 
-'''
 #Now for testing
 iDs = list(test_product_data['asin'])
 feature_vector_2 = pd.DataFrame({"num_pos":[], "num_neg":[], "vote_score":[], "pos_image_count":[], "neg_image_count":[], "pos_verified_count":[], "neg_verified_count":[], "pos_time_score":[], "neg_time_score":[]})
@@ -217,7 +226,7 @@ final_json["awesomeness"] = predicted_class
 final_json.to_json("predictions.json")
 
 
-'''
+
 
 
 
