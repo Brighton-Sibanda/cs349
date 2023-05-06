@@ -5,6 +5,8 @@ import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 nltk.download('vader_lexicon')
 nltk.download('stopwords')
+from nltk.stem import WordNetLemmatizer
+nltk.download('wordnet')
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingClassifier
 import warnings
@@ -150,6 +152,11 @@ def num_verified(df):
 feature_vector = pd.DataFrame({"num_pos":[], "num_neg":[], "vote_score":[], "pos_image_count":[], "neg_image_count":[], "pos_verified_count":[], "neg_verified_count":[], "pos_time_score":[], "neg_time_score":[]})
 iDs = list(product_data['asin'])
 
+def get_all_words(df, col_name, id_list):
+    #filter data
+    df = df[df['asin'].isin(id_list)]
+
+    return df[col_name].str.lower().str.cat(sep=' ')
 
 def make_feature_vector(iDs, feature_vector, review_data):
     
