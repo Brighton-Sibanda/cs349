@@ -5,9 +5,6 @@ import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 nltk.download('vader_lexicon')
 nltk.download('stopwords')
-from nltk.stem import WordNetLemmatizer
-nltk.download('wordnet')
-from nltk.corpus import stopwords
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingClassifier
 import warnings
@@ -37,10 +34,6 @@ test_review_data['vote'] = test_review_data['vote'].apply(lambda x: 0 if x == No
 test_review_data['image'] = test_review_data['image'].apply(lambda x: False if x == None else True)
 
 
-# slice the data to retain only the first 1000 rows
-product_data = product_data.iloc[:10000, :]
-
-
 '''
  Our feature vector  is as follows 
 
@@ -55,16 +48,6 @@ product_data = product_data.iloc[:10000, :]
 #9 neg_time_score
 
 '''
-awesome_corpus = ""
-non_awesome_corpus = ""
-def get_TFIDF(text, choices):
-    
-    result = process.extractBests(text, choices, score_cutoff=0, limit=None, scorer = fuzz.token_sort_ratio) 
-    return [result[0][1], result[1][1]]
-    
-
-
-
 global analyzer
 analyzer = SentimentIntensityAnalyzer()
 def get_sentiment(text):
@@ -167,31 +150,6 @@ def num_verified(df):
 feature_vector = pd.DataFrame({"num_pos":[], "num_neg":[], "vote_score":[], "pos_image_count":[], "neg_image_count":[], "pos_verified_count":[], "neg_verified_count":[], "pos_time_score":[], "neg_time_score":[]})
 iDs = list(product_data['asin'])
 
-# create a WordNetLemmatizer object
-lemmatizer = WordNetLemmatizer()
-
-# remove stopwords from the list of words
-stopwords_list = stopwords.words('english')
-filtered_words = [word for word in words if word not in stopwords_list]
-
-# define a function to lemmatize and remove stopwords from a sentence
-def lemmatize_sentence(sentence, filtered_words):
-    # tokenize the sentence into words
-    words = nltk.word_tokenize(sentence.lower())
-    
-    # lemmatize each word in the filtered list of words
-    lemmatized_words = [lemmatizer.lemmatize(word) for word in filtered_words]
-    
-    # join the lemmatized words back into a sentence
-    return ' '.join(lemmatized_words)
-
-def get_all_words(df, col_name, id_list):
-    #filter data
-    df = df[df['asin'].isin(id_list)]
-    #concatenate
-    concatenated_text = df[col_name].str.cat(sep=' ')
-
-    return lemmatize_sentence(concatenated_text)
 
 def make_feature_vector(iDs, feature_vector, review_data):
     
