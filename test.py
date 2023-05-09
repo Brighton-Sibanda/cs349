@@ -6,8 +6,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Collecting all files and cleaning up None values
-review_path = "C:/Users/rafae/Documents/Python/cs_349/pessoal/devided_dataset_v2/devided_dataset_v2/CDs_and_Vinyl/train/review_training.json"
-product_path = "C:/Users/rafae/Documents/Python/cs_349/pessoal/devided_dataset_v2/devided_dataset_v2/CDs_and_Vinyl/train/product_training.json"
+review_path = "devided_dataset_v2/CDs_and_Vinyl/train/review_training.json"
+product_path = "devided_dataset_v2/CDs_and_Vinyl/train/product_training.json"
 product_data = pd.read_json(product_path)
 review_data = pd.read_json(review_path)
 
@@ -37,6 +37,9 @@ doc_term_matrix_notawesome = vectorizer_notawesome.fit_transform(notawesome_corp
 # Get the vocabulary
 vocabulary_awesome = vectorizer_awesome.get_feature_names()
 vocabulary_notawesome = vectorizer_notawesome.get_feature_names()
+
+awesome = pd.DataFrame(doc_term_matrix_awesome.toarray(), columns=vectorizer_awesome.get_feature_names())
+notawesome = pd.DataFrame(doc_term_matrix_notawesome.toarray(), columns=vectorizer_notawesome.get_feature_names())
 
 # Print the document-term matrix and the vocabulary
 print(doc_term_matrix_awesome.toarray())
