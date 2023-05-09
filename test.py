@@ -6,18 +6,29 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Collecting all files and cleaning up None values
-review_path = "devided_dataset_v2/CDs_and_Vinyl/train/review_training.json"
-product_path = "devided_dataset_v2/CDs_and_Vinyl/train/product_training.json"
+review_path = "C:/Users/rafae/Documents/Python/cs_349/pessoal/devided_dataset_v2/devided_dataset_v2/CDs_and_Vinyl/train/review_training.json"
+product_path = "C:/Users/rafae/Documents/Python/cs_349/pessoal/devided_dataset_v2/devided_dataset_v2/CDs_and_Vinyl/train/product_training.json"
 product_data = pd.read_json(product_path)
 review_data = pd.read_json(review_path)
 
+product_data = product_data.iloc[:10, :]
+
 # Example text corpus
-awesome_corpus = list(product_data[product_data["awesomeness"] == 1]['asin'])
-notawesome_corpus = list(product_data[product_data["awesomeness"] == 1]['asin'])
+id_vector_awesome = product_data[product_data["awesomeness"] == 1]['asin']
+df_awesome = review_data[review_data['asin'].isin(id_vector_awesome)]['summary']
+#print(df_awesome.head())
+awesome_corpus = list(df_awesome)
+print(awesome_corpus)
+
+id_vector_notawesome = product_data[product_data["awesomeness"] == 0]['asin']
+df_notawesome = review_data[review_data['asin'].isin(id_vector_notawesome)]['summary']
+#print(df_notawesome.head())
+notawesome_corpus = list(df_notawesome)
+print(notawesome_corpus)
 
 # Create a CountVectorizer object
-vectorizer_awesome = TfidfVectorizer()
-vectorizer_notawesome = TfidfVectorizer()
+vectorizer_awesome = TfidfVectorizer(stop_words='english')
+vectorizer_notawesome = TfidfVectorizer(stop_words='english')
 
 # Fit the vectorizer to the corpus and transform the corpus into a document-term matrix
 doc_term_matrix_awesome = vectorizer_awesome.fit_transform(awesome_corpus)
