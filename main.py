@@ -170,14 +170,14 @@ iDs = list(product_data['asin'])
 # create a WordNetLemmatizer object
 lemmatizer = WordNetLemmatizer()
 
-# remove stopwords from the list of words
-stopwords_list = stopwords.words('english')
-filtered_words = [word for word in words if word not in stopwords_list]
-
 # define a function to lemmatize and remove stopwords from a sentence
 def lemmatize_sentence(sentence, filtered_words):
     # tokenize the sentence into words
     words = nltk.word_tokenize(sentence.lower())
+
+    # remove stopwords from the list of words
+    stopwords_list = stopwords.words('english')
+    filtered_words = [word for word in words if word not in stopwords_list]
     
     # lemmatize each word in the filtered list of words
     lemmatized_words = [lemmatizer.lemmatize(word) for word in filtered_words]
