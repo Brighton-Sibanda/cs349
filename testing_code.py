@@ -83,7 +83,7 @@ def get_all_words(df, col_name, id_list, code):
 
     return lemmatize_sentence(concatenated_text )
 
-def get_TFIDF(text, awesome_corpus, not_awesome_corpus):
+def get_TFIDF(text):
     
     # Transform the testing reviews into TF-IDF scores using the same vectorizer
     test_tfidf_awesome = vectorizer_awesome.transform(text)
