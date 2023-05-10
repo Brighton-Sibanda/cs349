@@ -36,20 +36,31 @@ train_tfidf_awesome = vectorizer_awesome.fit_transform(awesome_corpus)
 train_dtfidf_notawesome = vectorizer_notawesome.fit_transform(notawesome_corpus)
 
 # Get the vocabulary
-# vocabulary_awesome = vectorizer_awesome.get_feature_names()
-# vocabulary_notawesome = vectorizer_notawesome.get_feature_names()
+vocabulary_awesome = vectorizer_awesome.get_feature_names()
+vocabulary_notawesome = vectorizer_notawesome.get_feature_names()
 
 # Transforming document-term matrix to a dataframe
-awesome_df = pd.DataFrame(train_tfidf_awesome.toarray(), columns=vectorizer_awesome.get_feature_names())
-notawesome_df = pd.DataFrame(train_dtfidf_notawesome.toarray(), columns=vectorizer_notawesome.get_feature_names())
+awesome_df = pd.DataFrame(train_tfidf_awesome.toarray(), columns=vocabulary_awesome)
+notawesome_df = pd.DataFrame(train_dtfidf_notawesome.toarray(), columns=vocabulary_notawesome)
+
+test_review = [df_awesome_corpus.loc[0, 'summary']]
+# print(test_review)
 
 # transform the testing reviews into TF-IDF scores using the same vectorizer
 test_tfidf_awesome = vectorizer_awesome.transform(test_review)
-test_tfidf_notawesome = vectorizer_notawesome.transform(test_review2)
+test_tfidf_notawesome = vectorizer_notawesome.transform(test_review)
+
+# Transforming document-term matrix to a dataframe
+test_tfidf_awesome_df = pd.DataFrame(test_tfidf_awesome.toarray(), columns=vocabulary_awesome)
+# print(test_tfidf_awesome_df)
+test_tfidf_notawesome_df = pd.DataFrame(test_tfidf_notawesome.toarray(), columns=vocabulary_notawesome)
+# print(test_tfidf_notawesome_df)
 
 # Sum the columns together and create a new column with the results
-# awesome_df['col_sum'] = awesome_df.sum(axis=1)
-# notawesome_df['col_sum'] = notawesome_df.sum(axis=1)
+test_tfidf_awesome_df['col_sum'] = test_tfidf_awesome_df.sum(axis=1)
+print(test_tfidf_awesome_df)
+test_tfidf_notawesome_df['col_sum'] = test_tfidf_notawesome_df.sum(axis=1)
+print(test_tfidf_notawesome_df)
 
 # Adding asin back to the dataframe
 # awesome_df['asin'] = df_awesome_corpus['asin'].copy()
