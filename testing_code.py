@@ -12,8 +12,10 @@ from sklearn.ensemble import GradientBoostingClassifier
 import warnings
 import pandas as pd
 from nltk.corpus import stopwords
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
-# Collecting all files and cleaning up None values
+# Collecting all training files and cleaning up None values
 review_path = "devided_dataset_v2/CDs_and_Vinyl/train/review_training.json"
 product_path = "devided_dataset_v2/CDs_and_Vinyl/train/product_training.json"
 product_data = pd.read_json(product_path)
@@ -23,7 +25,7 @@ review_data["reviewText"] = review_data["reviewText"].fillna("negative")
 review_data['vote'] = review_data['vote'].apply(lambda x: 0 if x == None else int(x.replace(',','')))
 review_data['image'] = review_data['image'].apply(lambda x: False if x == None else True)
 
-
+# Collecting all testing files and cleaning up None values
 test_review_path = "devided_dataset_v2/CDs_and_Vinyl/test1/review_test.json"
 test_product_path = "devided_dataset_v2/CDs_and_Vinyl/test1/product_test.json"
 test_product_data = pd.read_json(test_product_path)
@@ -33,6 +35,23 @@ test_review_data["reviewText"] = test_review_data["reviewText"].fillna("negative
 test_review_data['vote'] = test_review_data['vote'].apply(lambda x: 0 if x == None else int(x.replace(',','')))
 test_review_data['image'] = test_review_data['image'].apply(lambda x: False if x == None else True)
 
+# Initializing vectorizer and corpus for the TF-IDF score calculations
+id_vector_awesome = product_data[product_data["awesomeness"] == 1]['asin']
+df_awesome_corpus = review_data.loc[review_data['asin'].isin(id_vector_awesome), ['asin', 'summary']].reset_index(drop=True)
+awesome_corpus = list(df_awesome_corpus.loc[:, 'summary']) # awesome corpus
+
+id_vector_notawesome = product_data[product_data["awesomeness"] == 0]['asin']
+df_notawesome_corpus = review_data.loc[review_data['asin'].isin(id_vector_notawesome), ['asin', 'summary']].reset_index(drop=True)
+notawesome_corpus = list(df_notawesome_corpus.loc[:, 'summary']) # not awesome corpus
+
+vectorizer_awesome = TfidfVectorizer(stop_words='english') # Awesome CountVectorizer object
+vectorizer_notawesome = TfidfVectorizer(stop_words='english') # Not Awesome CountVectorizer object
+
+train_tfidf_awesome = vectorizer_awesome.fit_transform(awesome_corpus) # Fit the vectorizer to the corpus for awesome
+train_dtfidf_notawesome = vectorizer_notawesome.fit_transform(notawesome_corpus) # Fit the vectorizer to the corpus for not awesome
+
+vocabulary_awesome = vectorizer_awesome.get_feature_names() # Awesome vocabulary
+vocabulary_notawesome = vectorizer_notawesome.get_feature_names() # Not awesome vocabulary
 
 # slice the data to retain only the first 1000 rows
 product_data = product_data.iloc[:100, :]
@@ -64,31 +83,21 @@ def get_all_words(df, col_name, id_list, code):
 
     return lemmatize_sentence(concatenated_text )
 
-def get_TFIDF(text, choices):
+def get_TFIDF(text, awesome_corpus, not_awesome_corpus):
     
-     #method 1
-    #result = process.extractBests(text, [choices], score_cutoff=0, limit=None, scorer = fuzz.token_sort_ratio) 
-    print(text)
-    return 100000000*fuzz.token_sort_ratio(text, choices)
+    # Transform the testing reviews into TF-IDF scores using the same vectorizer
+    test_tfidf_awesome = vectorizer_awesome.transform(text)
+    test_tfidf_not_awesome = vectorizer_notawesome.transform(text)
 
-#[result[0][1], result[1][1]] 
-'''
-    
-    #this one is from gpt,, hence choices isnt a list but just the text
+    # Transforming document-term matrix to a dataframe
+    test_tfidf_awesome_df = pd.DataFrame(test_tfidf_awesome.toarray(), columns=vocabulary_awesome)
+    test_tfidf_not_awesome_df = pd.DataFrame(test_tfidf_not_awesome.toarray(), columns=vocabulary_notawesome)
 
-    # Split the short string into words
-    short_words = text.split()
+    # Sum the columns together and create a new column with the results
+    aggregate_tfidf_awesome = test_tfidf_awesome_df.sum(axis=1)
+    aggregate_tfidf_not_awesome = test_tfidf_not_awesome_df.sum(axis=1)
 
-    # Calculate the average similarity score for each word in the short string
-    similarity_scores = []
-    for word in short_words:
-        score = fuzz.token_sort_ratio(choices, word)
-        similarity_scores.append(score)
-
-    average_score = (sum(similarity_scores) + 1 )/ (len(similarity_scores)+1)
-
-    return average_score'''
-
+    return aggregate_tfidf_awesome, aggregate_tfidf_not_awesome
 
 def build_corpus(product_data, review_data, text):
     
