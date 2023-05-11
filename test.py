@@ -44,7 +44,7 @@ awesome_df = pd.DataFrame(train_tfidf_awesome.toarray(), columns=vocabulary_awes
 notawesome_df = pd.DataFrame(train_dtfidf_notawesome.toarray(), columns=vocabulary_notawesome)
 
 test_review = [df_awesome_corpus.loc[0, 'summary']]
-# print(test_review)
+print(type(test_review))
 
 # transform the testing reviews into TF-IDF scores using the same vectorizer
 test_tfidf_awesome = vectorizer_awesome.transform(test_review)
@@ -58,9 +58,9 @@ test_tfidf_notawesome_df = pd.DataFrame(test_tfidf_notawesome.toarray(), columns
 
 # Sum the columns together and create a new column with the results
 test_tfidf_awesome_df['col_sum'] = test_tfidf_awesome_df.sum(axis=1)
-print(test_tfidf_awesome_df)
+# print(test_tfidf_awesome_df)
 test_tfidf_notawesome_df['col_sum'] = test_tfidf_notawesome_df.sum(axis=1)
-print(test_tfidf_notawesome_df)
+# print(test_tfidf_notawesome_df)
 
 # Adding asin back to the dataframe
 # awesome_df['asin'] = df_awesome_corpus['asin'].copy()

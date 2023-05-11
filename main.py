@@ -11,6 +11,7 @@ from nltk.corpus import stopwords
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingClassifier
 import warnings
+from sklearn.model_selection import GridSearchCV
 
 warnings.filterwarnings("ignore")
 
@@ -221,8 +222,30 @@ train_feature_vector["awesomeness"] = list(product_data["awesomeness"])
 X = train_feature_vector.iloc[:, :-1]
 y = train_feature_vector.iloc[:, -1]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Define the parameter grid
+param_grid = {
+    'learning_rate': [0.1, 0.01],
+    'n_estimators': [100, 200],
+    'max_depth': [3, 5],
+    'min_samples_split': [2, 4]
+}
+
+# Create the model
 clf = GradientBoostingClassifier()
+
+# Performing Hyperparameter Optimization - perform grid search cross-validation
+grid_search = GridSearchCV(clf, param_grid, cv=5)
+grid_search.fit(X_train, y_train)
+
+# Print the best hyperparameters
+print("Best hyperparameters:", grid_search.best_params_)
+
+# Train the model with the best hyperparameters
+clf = GradientBoostingClassifier(**grid_search.best_params_)
 clf.fit(X_train, y_train)
+
+# Calculating Score
 score = clf.score(X_test, y_test)
 
 #Now for testing
@@ -234,13 +257,3 @@ predicted_class = clf.predict(test_feature_vector)
 final_json = test_product_data
 final_json["awesomeness"] = predicted_class
 final_json.to_json("predictions.json")
-
-
-
-
-
-
-
-
-
-
