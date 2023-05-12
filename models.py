@@ -8,6 +8,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import GridSearchCV
 
 # Reading training data from CSV file
 feature_vector_path = "feature_vectorv2.csv"
@@ -17,6 +18,13 @@ feature_vector = pd.read_csv(feature_vector_path)
 train_ind = feature_vector.iloc[:, 2:-1]
 train_dep = feature_vector.iloc[:, -1]
 
+# Define the parameter grid
+param_grid = {
+    'learning_rate': [0.1, 0.01],
+    'n_estimators': [100, 200],
+    'max_depth': [3, 5],
+    'min_samples_split': [2, 4] }
+
 # Creating models
 nb_model = MultinomialNB()
 knn_model = KNeighborsClassifier()
@@ -25,6 +33,41 @@ svm_model = SVC()
 lr_model = LogisticRegression()
 rf_model = RandomForestClassifier()
 gb_model = GradientBoostingClassifier()
+
+# Performing Hyperparameter Optimization MultinomialNB - perform grid search cross-validation
+nb_grid_search = GridSearchCV(nb_model, param_grid, cv=5)
+nb_grid_search.fit(train_ind, train_dep)
+nb_model = MultinomialNB(**nb_grid_search.best_params_)
+
+# Performing Hyperparameter Optimization KNeighborsClassifier - perform grid search cross-validation
+knn_grid_search = GridSearchCV(knn_model, param_grid, cv=5)
+knn_grid_search.fit(train_ind, train_dep)
+knn_model = KNeighborsClassifier(**knn_grid_search.best_params_)
+
+# Performing Hyperparameter Optimization DecisionTreeClassifier - perform grid search cross-validation
+dt_grid_search = GridSearchCV(dt_model, param_grid, cv=5)
+dt_grid_search.fit(train_ind, train_dep)
+dt_model = DecisionTreeClassifier(**dt_grid_search.best_params_)
+
+# Performing Hyperparameter Optimization SVC - perform grid search cross-validation
+svm_grid_search = GridSearchCV(svm_model, param_grid, cv=5)
+svm_grid_search.fit(train_ind, train_dep)
+svm_model = SVC(**svm_grid_search.best_params_)
+
+# Performing Hyperparameter Optimization LogisticRegression - perform grid search cross-validation
+lr_grid_search = GridSearchCV(lr_model, param_grid, cv=5)
+lr_grid_search.fit(train_ind, train_dep)
+lr_model = LogisticRegression(**lr_grid_search.best_params_)
+
+# Performing Hyperparameter Optimization RandomForestClassifier - perform grid search cross-validation
+rf_grid_search = GridSearchCV(rf_model, param_grid, cv=5)
+rf_grid_search.fit(train_ind, train_dep)
+rf_model = RandomForestClassifier(**rf_grid_search.best_params_)
+
+# Performing Hyperparameter Optimization GradientBoostingClassifier - perform grid search cross-validation
+gb_grid_search = GridSearchCV(gb_model, param_grid, cv=5)
+gb_grid_search.fit(train_ind, train_dep)
+gb_model = GradientBoostingClassifier(**gb_grid_search.best_params_)
 
 # Training the models
 nb_model.fit(train_ind, train_dep)
