@@ -18,12 +18,62 @@ feature_vector = pd.read_csv(feature_vector_path)
 train_ind = feature_vector.iloc[:, 2:-1]
 train_dep = feature_vector.iloc[:, -1]
 
-# Define the parameter grid
-param_grid = {
+# Define the parameter grid for NB
+param_grid_nb = {
+    'alpha': [0.01, 0.1, 1.0],
+    'fit_prior': [True, False],
+    'class_prior': [None, [0.4, 0.6], [0.3, 0.5, 0.2]]
+}
+
+# Define parameter grid for Knn
+param_grid_knn = {
+    'n_neighbors': [3, 5, 7],
+    'weights': ['uniform', 'distance'],
+    'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute'],
+}
+
+# Define parameter grid for dt
+param_grid_dt = {'criterion': ['gini', 'entropy'],
+    'splitter': ['best', 'random'],
+    'max_depth': [None, 5, 10],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4],
+    'max_features': ['auto', 'sqrt', 'log2', None]
+}
+
+# Define parameter grid for svm
+param_grid_svm = {'C': [0.1, 1, 10, 100],
+    'kernel': ['linear', 'poly', 'rbf', 'sigmoid'],
+    'gamma': [0.01, 0.1, 1, 'scale'],
+    'degree': [2, 3, 4]
+}
+
+# Define parameter grid for lr
+param_grid_lr = {
+    'penalty': ['l1', 'l2', 'elasticnet', 'none'],
+    'C': [0.1, 1, 10],
+    'solver': ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga'],
+    'max_iter': [100, 200, 300],
+    'multi_class': ['ovr', 'multinomial']
+}
+
+# Define parameter grid for rf
+param_grid_rf = {
+    'n_estimators': [50, 100, 200],
+    'max_depth': [5, 10, None],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4],
+    'max_features': ['sqrt', 'log2'],
+    'bootstrap': [True, False]
+}
+
+# Define the parameter grid for Gradient Boosting
+param_grid_gb = {
     'learning_rate': [0.1, 0.01],
     'n_estimators': [100, 200],
     'max_depth': [3, 5],
-    'min_samples_split': [2, 4] }
+    'min_samples_split': [2, 4] 
+}
 
 # Creating models
 nb_model = MultinomialNB()
@@ -35,37 +85,37 @@ rf_model = RandomForestClassifier()
 gb_model = GradientBoostingClassifier()
 
 # Performing Hyperparameter Optimization MultinomialNB - perform grid search cross-validation
-nb_grid_search = GridSearchCV(nb_model, param_grid, cv=5)
+nb_grid_search = GridSearchCV(nb_model, param_grid_nb, cv=5)
 nb_grid_search.fit(train_ind, train_dep)
 nb_model = MultinomialNB(**nb_grid_search.best_params_)
 
 # Performing Hyperparameter Optimization KNeighborsClassifier - perform grid search cross-validation
-knn_grid_search = GridSearchCV(knn_model, param_grid, cv=5)
+knn_grid_search = GridSearchCV(knn_model, param_grid_knn, cv=5)
 knn_grid_search.fit(train_ind, train_dep)
 knn_model = KNeighborsClassifier(**knn_grid_search.best_params_)
 
 # Performing Hyperparameter Optimization DecisionTreeClassifier - perform grid search cross-validation
-dt_grid_search = GridSearchCV(dt_model, param_grid, cv=5)
+dt_grid_search = GridSearchCV(dt_model, param_grid_dt, cv=5)
 dt_grid_search.fit(train_ind, train_dep)
 dt_model = DecisionTreeClassifier(**dt_grid_search.best_params_)
 
 # Performing Hyperparameter Optimization SVC - perform grid search cross-validation
-svm_grid_search = GridSearchCV(svm_model, param_grid, cv=5)
+svm_grid_search = GridSearchCV(svm_model, param_grid_svm, cv=5)
 svm_grid_search.fit(train_ind, train_dep)
 svm_model = SVC(**svm_grid_search.best_params_)
 
 # Performing Hyperparameter Optimization LogisticRegression - perform grid search cross-validation
-lr_grid_search = GridSearchCV(lr_model, param_grid, cv=5)
+lr_grid_search = GridSearchCV(lr_model, param_grid_lr, cv=5)
 lr_grid_search.fit(train_ind, train_dep)
 lr_model = LogisticRegression(**lr_grid_search.best_params_)
 
 # Performing Hyperparameter Optimization RandomForestClassifier - perform grid search cross-validation
-rf_grid_search = GridSearchCV(rf_model, param_grid, cv=5)
+rf_grid_search = GridSearchCV(rf_model, param_grid_rf, cv=5)
 rf_grid_search.fit(train_ind, train_dep)
 rf_model = RandomForestClassifier(**rf_grid_search.best_params_)
 
 # Performing Hyperparameter Optimization GradientBoostingClassifier - perform grid search cross-validation
-gb_grid_search = GridSearchCV(gb_model, param_grid, cv=5)
+gb_grid_search = GridSearchCV(gb_model, param_grid_gb, cv=5)
 gb_grid_search.fit(train_ind, train_dep)
 gb_model = GradientBoostingClassifier(**gb_grid_search.best_params_)
 
