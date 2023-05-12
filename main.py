@@ -55,7 +55,7 @@ vocabulary_awesome = vectorizer_awesome.get_feature_names() # Awesome vocabulary
 vocabulary_notawesome = vectorizer_notawesome.get_feature_names() # Not awesome vocabulary
 
 # slice the data to retain only the first 1000 rows
-product_data = product_data.iloc[:1000, :]
+#product_data = product_data.iloc[:1000, :]
 
 warnings.filterwarnings("ignore")
 
@@ -106,7 +106,7 @@ def get_vote_score(df):
             
         if (pos_list2[i] > neg_list2[i]) and temp_pos == pos:
             pos += vote_list[i]
-        elif pos_list1[i] < neg_list1[i] and temp_neg == neg:
+        elif pos_list2[i] < neg_list2[i] and temp_neg == neg:
             neg += vote_list[i]
         
         i += 1
@@ -165,7 +165,7 @@ def image_review_count(df):
     neg2 = is_negative(df_new, 'aw_s', 'naw_s')
     
     
-    return (pos1 + pos2) - (neg1 + neg2)
+    return ((pos1 + pos2)+1) / ((neg1 + neg2) + 1)
 
 def num_verified(df):
 
@@ -180,7 +180,7 @@ def num_verified(df):
     neg2 = is_negative(df_new, 'aw_s', 'naw_s')
     
     
-    return (pos1 + pos2) - (neg1 + neg2)
+    return ((pos1 + pos2) + 1) / ( (neg1 + neg2) + 1)
 
     
 feature_vector = pd.DataFrame({"aw_rt":[], "naw_rt":[], "aw_s":[], "naw_s":[],"vote_score":[], "image_score":[], "verified":[], "time_score":[]})
@@ -221,6 +221,10 @@ def make_feature_vector(iDs, feature_vector, review_data):
 train_feature_vector = make_feature_vector(iDs, feature_vector, review_data)
 train_feature_vector["awesomeness"] = list(product_data["awesomeness"])
 
+
+
+    
+
 #NOW TRAINING
 X = train_feature_vector.iloc[:, :-1]
 y = train_feature_vector.iloc[:, -1]
@@ -251,7 +255,7 @@ clf.fit(X_train, y_train)
 # Calculating Score
 score = clf.score(X_test, y_test)
 
-#train_feature_vector.to_csv("feature_vectorv2.csv")
+train_feature_vector.to_csv("feature_vectorv2.csv")
 
 '''
 #Now for testing
