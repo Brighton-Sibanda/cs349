@@ -237,9 +237,6 @@ param_grid = {
     'max_depth': [3, 5],
     'min_samples_split': [2, 4] }
 
-# Create the model
-clf = GradientBoostingClassifier()
-
 # Performing Hyperparameter Optimization - perform grid search cross-validation
 grid_search = GridSearchCV(clf, param_grid, cv=5)
 grid_search.fit(X_train, y_train)
