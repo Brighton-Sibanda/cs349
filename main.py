@@ -125,7 +125,7 @@ def calculate_time_score(df):
     newest_date = df['unixReviewTime'].max()
     
     if oldest_date == newest_date:
-        return (0.5, 0.5)  # if there's only one review, give it a neutral score
+        return 1  # if there's only one review, give it a neutral score
     
     pos_scores = []
     neg_scores = []
@@ -148,7 +148,7 @@ def calculate_time_score(df):
         neg_scores.append(0.5)
         
         
-    return (sum(pos_scores)/len(pos_scores), sum(neg_scores)/len(neg_scores))
+    return ((sum(pos_scores)/len(pos_scores)) + 1) / ((sum(neg_scores)/len(neg_scores))+1)
 
 
 
@@ -183,7 +183,7 @@ def num_verified(df):
     return (pos1 + pos2) - (neg1 + neg2)
 
     
-feature_vector = pd.DataFrame({"aw_rt":[], "naw_rt":[], "aw_s":[], "naw_s":[],"vote_score":[], "image_score":[], "verified":[]})
+feature_vector = pd.DataFrame({"aw_rt":[], "naw_rt":[], "aw_s":[], "naw_s":[],"vote_score":[], "image_score":[], "verified":[], "time_score":[]})
 iDs = list(product_data['asin'])
 
 def make_feature_vector(iDs, feature_vector, review_data):
@@ -213,8 +213,9 @@ def make_feature_vector(iDs, feature_vector, review_data):
         naw_rt1 = current_data['naw_rt'].mean()
         aw_s1 = current_data['aw_s'].mean()
         naw_s1 = current_data['naw_s'].mean()
+        time = calculate_time_score(current_data)
         
-        feature_vector.loc[len(feature_vector)] = [aw_rt1, naw_rt1, aw_s1, naw_s1, vote_score, image_score, verified]
+        feature_vector.loc[len(feature_vector)] = [aw_rt1, naw_rt1, aw_s1, naw_s1, vote_score, image_score, verified, time]
     return feature_vector
 
 train_feature_vector = make_feature_vector(iDs, feature_vector, review_data)
