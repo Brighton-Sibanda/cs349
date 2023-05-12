@@ -221,10 +221,6 @@ def make_feature_vector(iDs, feature_vector, review_data):
 train_feature_vector = make_feature_vector(iDs, feature_vector, review_data)
 train_feature_vector["awesomeness"] = list(product_data["awesomeness"])
 
-
-
-    
-
 #NOW TRAINING
 X = train_feature_vector.iloc[:, :-1]
 y = train_feature_vector.iloc[:, -1]
