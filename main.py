@@ -116,9 +116,11 @@ def get_vote_score(df):
 
 
 def calculate_time_score(df):
+    
     """function the gives a value between 0 and 1 for a review depending
     on the relative time it was sent
     """
+    
     oldest_date = df['unixReviewTime'].min()
     newest_date = df['unixReviewTime'].max()
     
@@ -127,18 +129,25 @@ def calculate_time_score(df):
     
     pos_scores = []
     neg_scores = []
+    
     time_range = newest_date - oldest_date
+    
     for index, row in df.iterrows():
+        
         date = row['unixReviewTime']
         score = (date - oldest_date) / time_range
-        if row["positive"]:
+        
+        if row['aw_rt'] > row['naw_rt']:
             pos_scores.append(score)
         else:
             neg_scores.append(score)
+            
     if not pos_scores:
         pos_scores.append(0.5)
     if not neg_scores:
         neg_scores.append(0.5)
+        
+        
     return (sum(pos_scores)/len(pos_scores), sum(neg_scores)/len(neg_scores))
 
 
@@ -248,6 +257,7 @@ clf.fit(X_train, y_train)
 # Calculating Score
 score = clf.score(X_test, y_test)
 
+#train_feature_vector.to_csv("feature_vectorv2.csv")
 
 '''
 #Now for testing
