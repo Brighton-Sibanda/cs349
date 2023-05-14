@@ -4,7 +4,7 @@ import warnings
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import GridSearchCV
-
+import pickle
 
 
 warnings.filterwarnings("ignore")
@@ -29,6 +29,10 @@ test_review_data["summary"] = test_review_data["summary"].fillna("negative")
 test_review_data["reviewText"] = test_review_data["reviewText"].fillna("negative")
 test_review_data['vote'] = test_review_data['vote'].apply(lambda x: 0 if x == None else int(x.replace(',','')))
 test_review_data['image'] = test_review_data['image'].apply(lambda x: False if x == None else True)
+test_review_data['summary'] = test_review_data['summary'].apply(lambda x: "bad" if x == "" else x)
+test_review_data['reviewText'] = test_review_data['reviewText'].apply(lambda x: "bad" if x == "" else x)
+
+
 
 # Initializing vectorizer and corpus for the TF-IDF score calculations
 id_vector_awesome = product_data[product_data["awesomeness"] == 1]['asin']
@@ -50,11 +54,20 @@ vocabulary_notawesome = vectorizer_notawesome.get_feature_names() # Not awesome 
 
 # slice the data to retain only the first 1000 rows
 #product_data = product_data.iloc[:30, :]
+#test_product_data = product_data.iloc[:3, :]
 
 
-def get_TFIDF(text):
+
+def get_TFIDF(text, num):
     
     ''' This function calculates the TFIDF score of text, based on the two corpuses awesome and not awesome'''
+    
+    if len(text) == 0:
+        final_ans = [[], []]
+        for i in range(num):
+            final_ans[0] = final_ans[0] + [0]
+            final_ans[1] = final_ans[1] + [0]
+        return final_ans
     
     # Transform the testing reviews into TF-IDF scores using the same vectorizer
     test_tfidf_awesome = vectorizer_awesome.transform(text)
@@ -197,8 +210,8 @@ def make_feature_vector(iDs, feature_vector, review_data, text):
             print("now finished with " + str(k) + " products, for " + text)
         k += 1
         current_data = review_data[review_data["asin"] == i]
-        aw_rt, naw_rt  = get_TFIDF(list(current_data['reviewText']))
-        aw_s, naw_s  = get_TFIDF(list(current_data['summary']))
+        aw_rt, naw_rt  = get_TFIDF(list(current_data['reviewText']), len(current_data['reviewText']))
+        aw_s, naw_s  = get_TFIDF(list(current_data['summary']), len(current_data['summary']))
         
         current_data['aw_rt'] = list(aw_rt)
         current_data['naw_rt'] = list(naw_rt)
@@ -239,6 +252,7 @@ param_grid_lr = {
 }
 
 
+print("Model set; now performing hyperparameter optimization for Logistic Regression model, may take a small while \n")
 lr_model = LogisticRegression()
 lr_grid_search = GridSearchCV(lr_model, param_grid_lr, cv=5)
 lr_grid_search.fit(X, y)
@@ -252,7 +266,7 @@ print ("Done with training, now onto test data \n \n")
 
 #Now for testing
 iDs = list(test_product_data['asin'])
-feature_vector_2 = pd.DataFrame({"num_pos":[], "num_neg":[], "vote_score":[], "pos_image_count":[], "neg_image_count":[], "pos_verified_count":[], "neg_verified_count":[], "pos_time_score":[], "neg_time_score":[]})
+feature_vector_2 = pd.DataFrame({"aw_rt":[], "naw_rt":[], "aw_s":[], "naw_s":[],"vote_score":[], "image_score":[], "verified":[], "time_score":[]})
 test_feature_vector = make_feature_vector(iDs, feature_vector_2, test_review_data, "testing")
 predicted_class = lr_model.predict(test_feature_vector)
 
@@ -260,6 +274,9 @@ final_json = test_product_data
 final_json["awesomeness"] = predicted_class
 final_json.to_json("predictions.json")
 
+filename = 'amazon_reviews_model.pickle'
+with open(filename, 'wb') as file:
+    pickle.dump(lr_model, file)
 
 
 #running metrics code; commented for time here
