@@ -18,7 +18,7 @@ feature_vector_path = "feature_vectorv2.csv"
 feature_vector = pd.read_csv(feature_vector_path)
 
 # Separating features and target variables in training data
-train_ind = feature_vector.iloc[:, 2:-1]
+train_ind = feature_vector.iloc[:, 1:-1]
 train_dep = feature_vector.iloc[:, -1]
 
 # Define the parameter grid for NB
@@ -186,9 +186,16 @@ knn_scores = cross_val_score(knn_model, train_ind, train_dep, cv=10, scoring='f1
 print("k nearest neighbor f1 Score (10-fold cross-validation): {:.2f}".format(knn_scores.mean()))
 
 
-lr_scores = cross_val_score(lr_model, train_ind, train_dep, cv=10, scoring='f1_macro')
-print("Logistic Regression F1 Score (10-fold cross-validation): {:.2f}".format(lr_scores.mean()))
 
+
+lr_scores = cross_val_score(lr_model, train_ind, train_dep, cv=10, scoring='f1_macro')
+lr_2scores = cross_val_score(lr_model, train_ind, train_dep, cv=10, scoring='precision')
+lr_3scores = cross_val_score(lr_model, train_ind, train_dep, cv=10, scoring='accuracy')
+lr_4scores = cross_val_score(lr_model, train_ind, train_dep, cv=10, scoring='recall')
+print("Logistic Regression F1 Score (10-fold cross-validation): {:.2f}".format(lr_scores.mean()))
+print("Logistic Regression precision  Score (10-fold cross-validation): {:.2f}".format(lr_2scores.mean()))
+print("Logistic Regression accuracy Score (10-fold cross-validation): {:.2f}".format(lr_3scores.mean()))
+print("Logistic Regression recall Score (10-fold cross-validation): {:.2f}".format(lr_4scores.mean()))
 
 
 
@@ -202,6 +209,10 @@ print("Decision Tree F1 Score (10-fold cross-validation): {:.2f}".format(dt_scor
 rf_scores = cross_val_score(rf_model, train_ind, train_dep, cv=10, scoring='f1_macro')
 print("Random Forest F1 Score (10-fold cross-validation): {:.2f}".format(rf_scores.mean()))
 
+
+print("\n \n")
+print ("Support vector machine takes a very long time to run; disregarding it as an option")
+''' 
 svm_grid_search = GridSearchCV(svm_model, param_grid_svm, cv=5)
 svm_grid_search.fit(train_ind, train_dep)
 svm_model = SVC(**svm_grid_search.best_params_)
@@ -215,4 +226,4 @@ print("Support Vector Machine Recall: {:.2f}".format(svm_recall))
 print("Support Vector Machine F1 Score: {:.2f}".format(svm_f1))
 
 svm_scores = cross_val_score(svm_model, train_ind, train_dep, cv=10, scoring='f1_macro')
-print("Support Vector Machine F1 Score (10-fold cross-validation): {:.2f}".format(svm_scores.mean()))
+print("Support Vector Machine F1 Score (10-fold cross-validation): {:.2f}".format(svm_scores.mean()))'''
